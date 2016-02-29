@@ -10,7 +10,7 @@ export class ReplayParser {
         var protocolVersion = unpackInt(data.slice(8, 12));
         var spyPartyVersion = unpackInt(data.slice(12, 16));
 
-        if (versionNumber == 3) {
+        if (versionNumber == 3 || versionNumber == 2) {
             return parseVersion3(filename, data);
         } else {
             console.log("Unknown version");
