@@ -1,0 +1,11 @@
+<div id="test" ng-controller="GearsController">
+
+    <div class="list-group" ng-repeat="replay in replays | filter:{$:opponent} | filter:{level:map, missionType:layout, result:gameresult}:true | orderBy:'-gameStartTime'">
+        <a href="#/replay/{{replay.uuid}}" ng-class="replayStyle(replay)" style="font-size: 24px"><span style="alignment: left">
+            {{replay.spy}} vs. {{replay.sniper}} on {{replay.level | shorten}} <small>({{replay.humanGameStartTime}})</small>
+        </span></a>
+    </div>
+
+</div>
+
+

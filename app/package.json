@@ -1,0 +1,28 @@
+{
+  "name": "partyspy",
+  "productName": "PartySpy",
+  "identifier": "com.lthummus.spypartygears",
+  "description": "An application for bulk SpyParty replay analysis",
+  "version": "0.0.2",
+  "author": "LtHummus",
+  "copyright": "© LtHummus",
+  "main": "background.js",
+  "dependencies": {
+    "fs-jetpack": "^0.7.0",
+    "angular": "1.5.x",
+    "angular-route": "1.5.x",
+    "binary": "0.3.x",
+    "jquery": "2.2.x",
+    "sprintf-js": "1.0.x",
+    "bootstrap": "3.3.x",
+    "angular-local-storage": "0.2.x",
+    "underscore": "1.8.x",
+    "node-uuid": "1.4.x",
+    "moment": "2.11.x",
+    "font-awesome": "4.5.x",
+    "angular-chart.js": "^0.8.8",
+    "xlsx": "^0.8.0",
+    "chart.js": "^1.0.2",
+    "sweetalert": "^1.1.3"
+  }
+}

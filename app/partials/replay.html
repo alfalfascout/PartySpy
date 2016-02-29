@@ -1,0 +1,16 @@
+<div id="test">
+
+    <a href="#/main"><button class="btn btn-primary">Go back</button></a>
+    <h1><strong><i class="fa fa-user-secret fa-lg"></i> {{theReplay.spy}}</strong> vs. <strong><i class="fa fa-crosshairs fa-lg"></i> {{theReplay.sniper}}</strong></h1>
+    <p style="font-size: 24px"><img style="width: 50%; height: 50%;" ng-src="img/{{theReplay.level | image}}" /></p>
+    <p style="font-size: 24px">{{theReplay.result}} in {{theReplay.duration | minsec}}</p>
+
+    <p style="font-size: 24px">{{theReplay.missionType}}</p>
+    <table class="table table-striped">
+        <tr class="success" ng-repeat="mission in missions.completed"><td>{{mission}}</td></tr>
+        <tr class="warning" ng-repeat="mission in missions.uncompleted"><td>{{mission}}</td></tr>
+        <tr class="danger" style="text-decoration: line-through;" ng-repeat="mission in missions.disabled"><td>{{mission}}</td></tr>
+    </table>
+    <p style="font-size: 24px">Game Timestamp: {{theReplay.humanGameStartTime}}</p>
+    <p style="font-size: 24px"><button ng-click="openInShell()" class="btn btn-info">Locate File</button></p>
+</div>

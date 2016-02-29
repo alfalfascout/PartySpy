@@ -1,0 +1,121 @@
+<!doctype html>
+<html ng-app="gearsApp">
+<head>
+    <meta charset="utf-8">
+    <title>PartySpy</title>
+
+    <link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="node_modules/angular-chart.js/dist/angular-chart.css" rel="stylesheet" type="text/css">
+    <link href="node_modules/sweetalert/dist/sweetalert.css" rel="stylesheet" type="text/css">
+    <link href="./stylesheets/main.css" rel="stylesheet" type="text/css">
+
+    <style>
+        i:before {
+            font-size: 0.50em;
+            position: relative;
+            top: -7px;
+        }
+    </style>
+
+    <script>
+        window.$ = window.jQuery = require('./node_modules/jquery/dist/jquery.js');
+        require('bootstrap');
+    </script>
+    <script src="vendor/electron_boilerplate/context_menu.js"></script>
+    <script src="vendor/electron_boilerplate/external_links.js"></script>
+    <script src="node_modules/angular/angular.js"></script>
+    <script src="node_modules/chart.js/Chart.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="node_modules/angular-route/angular-route.js"></script>
+    <script src="node_modules/angular-local-storage/dist/angular-local-storage.js"></script>
+    <script src="node_modules/underscore/underscore.js"></script>
+    <script src="node_modules/angular-chart.js/dist/angular-chart.js"></script>
+    <script src="node_modules/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="node_modules/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script src="app.js"></script>
+</head>
+<body>
+<div class="container-fluid" ng-controller="GearsController">
+    <div class="row">
+        <div class="col-md-2" id="side-nav">
+            <!-- SORRY ALFALFA! -->
+            <div ng-if="uninitialized()" style="color: red; font-weight: bold; font-size: 24px">
+                YOU HAVEN'T INITIALIZED ANYTHING.  GO CLICK SETTINGS AND SET STUFF UP.  THEN RESTART THE APP.
+            </div>
+            <!-- Side nav -->
+            <div id="filter-form">
+                <div class="form-group-sm">
+                    <label for="opponent">Opponent:</label>
+                    <input type="text" id="opponent" ng-model="opponent" ng-change="reevalBulk()"/>
+                </div>
+                <div class="form-group-sm">
+                <label for="map">Map:</label>
+                    <select id="map" ng-model="map" ng-change="reevalBulk()">
+                        <option value="Beginner v. Beginner Ballroom">Beginner v. Beginner Ballroom</option>
+                        <option value="Beginner v. Beginner High-Rise">Beginner v. Beginner High-Rise</option>
+                        <option value="New Art Ballroom">New Art Ballroom</option>
+                        <option value="High-Rise">High-Rise</option>
+                        <option value="Gallery">Gallery</option>
+                        <option value="Courtyard 2">Courtyard 2</option>
+                        <option value="Panopticon">Panopticon</option>
+                        <option value="Veranda">Veranda</option>
+                        <option value="Balcony">Balcony</option>
+                        <option value="Crowded Pub">Crowded Pub</option>
+                        <option value="Pub">Pub</option>
+                        <option value="Old Ballroom">Old Ballroom</option>
+                        <option value="Courtyard 1">Courtyard 1</option>
+                        <option value="Double Modern">Double Modern</option>
+                        <option value="Modern">Modern</option>
+                    </select>
+                </div>
+                <div class="form-group-sm">
+                    <label for="layout">Layout:</label>
+                    <select id="layout" ng-model="layout" ng-change="reevalBulk()">
+                        <option ng-repeat="curr in layouts" value="{{curr}}">{{curr}}</option>
+                    </select>
+                </div>
+                <div class="form-group-sm">
+                    <label for="gameresult">Game result:</label>
+                    <select id="gameresult" ng-model="gameresult" ng-change="reevalBulk()">
+                        <option value="Missions Win">Missions Win</option>
+                        <option value="Spy Time Out">Spy Time Out</option>
+                        <option value="Spy Shot">Spy Shot</option>
+                        <option value="Civilian Shot">Civilian Shot</option>
+                        <option value="Incomplete">Incomplete</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" ng-click="clearFilter()">Clear Filters</button><br />
+            <button class="btn" ng-click="export()">Export Data</button>
+            <br />
+            <br />
+            <br />
+            <a href="#/stats">
+                <button class="btn">Stats</button>
+            </a>
+            <a href="#/settings">
+            <button class="btn">Settings</button>
+            </a>
+
+            <div id="bulk">
+                Games: {{bulkResults.games}} <br/>
+                Games won: {{bulkResults.gamesWon}} <br/>
+                Games lost: {{bulkResults.gamesLost}}
+            </div>
+            <div id="version">
+                <br />
+                <br />
+                <br />
+                <p>Version {{version}}</p>
+            </div>
+        </div>
+        <div class="col-md-10" ng-view></div>
+        <!-- main -->
+
+
+    </div>
+</div>
+</body>
+</html>
