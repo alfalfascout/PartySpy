@@ -1,9 +1,41 @@
-<div id="test">
+<div id="test" ng-controller="ReplayController">
 
     <a href="#/main"><button class="btn btn-primary">Go back</button></a>
     <h1><strong><i class="fa fa-user-secret fa-lg"></i> {{theReplay.spy}}</strong> vs. <strong><i class="fa fa-crosshairs fa-lg"></i> {{theReplay.sniper}}</strong></h1>
     <p style="font-size: 24px"><img style="width: 50%; height: 50%;" ng-src="img/{{theReplay.level | image}}" /></p>
     <p style="font-size: 24px">{{theReplay.result}} in {{theReplay.duration | minsec}}</p>
+    <div id="charsandlights" class="image" ng-style="timelineStyle">
+        <p>
+            <table class="table">
+                <tr>
+                    <td width=20% style="text-align: center;">Spy</td>
+                    <td width=20% style="text-align: center;">Double Agent</td>
+                    <td width=20% style="text-align: center;">Ambassador</td>
+                    <td width=20% style="text-align: center;">Seduction Target</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;"><div class="image image--spy-border"><img ng-src="img/characters/{{journal.getSpy() | charimage}}" /></div></td>
+                    <td style="text-align: center;"><div class="image image--da-border"><img ng-src="img/characters/{{journal.getDoubleAgent() | charimage}}" /></div></td>
+                    <td style="text-align: center;"><div class="image image--amba-border"><img ng-src="img/characters/{{journal.getAmbassdaor() | charimage}}" /></div></td>
+                    <td style="text-align: center;"><div class="image image--st-border"><img ng-src="img/characters/{{journal.getSeductionTarget() | charimage}}" /></div></td>
+                </tr>
+            </table>
+        </p>
+
+        <p style="font-size: 24px">Highlights</p>
+        <div id="highlights" class="image">
+            <div ng-class="character.cssClass" ng-repeat="character in highlights">
+                <img ng-src="img/characters/{{character.character | charimage}}">
+            </div>
+        </div>
+
+        <p style="font-size: 24px">Lowlights</p>
+        <div id="lowlights" class="image">
+            <div ng-class="character.cssClass" ng-repeat="character in lowlights">
+                <img ng-src="img/characters/{{character.character | charimage}}">
+            </div>
+        </div>
+    </div>
 
     <p style="font-size: 24px">{{theReplay.missionType}}</p>
     <table class="table table-striped">
@@ -13,4 +45,20 @@
     </table>
     <p style="font-size: 24px">Game Timestamp: {{theReplay.humanGameStartTime}}</p>
     <p style="font-size: 24px"><button ng-click="openInShell()" class="btn btn-info">Locate File</button></p>
+
+    <div id="timeline" ng-style="timelineStyle">
+        <b>Timeline:</b> <br />
+        <div id="gamelog" style="border: 2px solid black; overflow:scroll; height:400px; overflow-x: hidden">
+            <div ng-repeat="item in timeline track by $index">
+                <div ng-style="item.style">{{item.line}} <img style="max-height: 30px; width: auto" ng-src="img/characters/{{item.image | charimage}}" /></div>
+            </div>
+        </div>
+
+
+        <div class="form-group" ng-style="showJournal">
+            <label for="raw">Raw journal:</label>
+            <textarea class="form-control" rows="15" disabled id="raw">{{journal.raw}}</textarea>
+        </div>
+    </div>
+
 </div>

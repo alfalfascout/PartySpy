@@ -29,7 +29,8 @@ export var MAP_LIST = ["Beginner v. Beginner High-Rise",
     "Old Ballroom",
     "Courtyard 1",
     "Double Modern",
-    "Modern"];
+    "Modern",
+    "Old High-Rise"];
 
 export var parseString = function(data) {
     return String.fromCharCode.apply(null, data);
@@ -41,24 +42,6 @@ export var unpackInt = function(data) {
     return data[0] | data[1] << 8 | data[2] << 16 | data[3] << 24;
 };
 
-Array.prototype.diff = function(a) {
-    return this.filter(function(i) { return a.indexOf(i) < 0});
-};
-
-export var generateMissionObject = function(replay) {
-    var unavailbleMissions = replay["unavailableMissions"] || [];
-    var completedMissions = replay["completedMissions"];
-    var uncompletedMissions = replay["selectedMissions"].diff(completedMissions);
-    var unselectedMissions = unpackMissions(0xFF).diff(unavailbleMissions).diff(replay["selectedMissions"]);
-
-
-    return {
-        unavailable: unavailbleMissions,
-        completed: completedMissions,
-        uncompleted: uncompletedMissions,
-        disabled: unselectedMissions
-    };
-};
 
 export var unpackMissions = function(data) {
     var missions = [];
@@ -113,29 +96,3 @@ export var unpackMissionType = function(data) {
     return sprintf('%s %d of %d', mode, required, available);
 };
 
-export var getWinner = function(item){
-    if (item.result === "Incomplete")
-        return undefined;
-    if (item.result === "Missions Win" || item.result === "Civilian Shot") {
-        return item.spy;
-    } else {
-        return item.sniper;
-    }
-};
-export var getLoser = function(item){
-    if (item.result === "Incomplete")
-        return undefined;
-    if (item.result === "Missions Win" || item.result === "Civilian Shot") {
-        return item.sniper;
-    } else {
-        return item.spy;
-    }
-};
-
-export var isOurGame = function(item, username) {
-    return item.spy === username || item.sniper === username;
-};
-
-export var isIncomplete = function(item) {
-    return item.result === 'Incomplete';
-};

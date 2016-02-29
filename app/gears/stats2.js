@@ -1,4 +1,3 @@
-import { getWinner, getLoser, isOurGame, isIncomplete } from './utils'
 import { MAP_LIST } from './utils'
 
 
@@ -30,14 +29,14 @@ export class Stats {
     };
 
     parseReplay(replay) {
-        if (!isOurGame(replay, this.username))
+        if (!replay.isOurGame(this.username) || replay.isIncomplete())
             return;
 
-        if (isIncomplete(replay))
+        if (replay.level.startsWith("Unknown"))
             return;
 
-        var winner = getWinner(replay);
-        var loser = getLoser(replay);
+        var winner = replay.getWinner();
+        var loser = replay.getLoser();
 
         var ourRole = replay.spy === this.username ? "spy" : "sniper";
         var opponent = replay.spy === this.username ? replay.sniper : replay.spy;

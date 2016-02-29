@@ -1,12 +1,14 @@
 'use strict';
 
-import { ReplayParser } from './replay_parser'
 import { bulkAnalyze } from './bulk'
-import { getStats } from './stats'
-import { generateMissionObject, getWinner, getLoser, getVersionNumber  } from './utils'
+import { getVersionNumber } from './utils'
 import { Stats } from './stats2'
 import { exportExcelData } from './excel'
 import { getAwfulColor } from './tunemode'
+import { testDecompress } from './journal/journal_shell'
+import { Replay } from './replay/replay'
+import { CHARACTER_IMAGE_MAP } from './journal/characters'
+import env from '../env'
 
 const fs = require('fs');
 const path = require('path');
@@ -15,9 +17,6 @@ const remote = require('electron').remote;
 const dialog = remote.require('electron').dialog;
 const shell = remote.require('electron').shell;
 const sprintf = require('sprintf-js').sprintf;
-
-
-var parser = new ReplayParser();
 
 var version = getVersionNumber;
 
@@ -43,6 +42,12 @@ function listFiles(startPath,filter){
     return filelist;
 }
 
+var listAllJournals = function(path) {
+    var journals = listFiles(path, '.journal');
+    return _.flatten(journals);
+
+};
+
 var startParse = function(filePath, username, callback) {
     var replayFiles = listFiles(filePath, '.replay');
 
@@ -52,9 +57,9 @@ var startParse = function(filePath, username, callback) {
 
     replayFiles.forEach(function(item, idx, list) {
         var data = fs.readFileSync(item);
-        var replay = parser.parseFile(item, data);
+        var replay = new Replay(item, data);
         if (replay != undefined)
-            replays.push(parser.parseFile(item, data));
+            replays.push(replay);
     });
 
 
@@ -72,17 +77,21 @@ var IMAGE_MAP = {
     "Panopticon": "panopticon.png",
     "Veranda": "veranda.png",
     "Balcony": "balcony.png",
-    "Crowded Pub": "pub.png",
+    "Crowded Pub": "crowdedpub.png",
     "Pub": "pub.png",
     "Old Ballroom": "oldballroom.png",
     "Courtyard 1": "courtyard1.png",
     "Double Modern": "2xmodern.png",
-    "Modern": "modern.png"
+    "Modern": "modern.png",
+    "Old High-Rise": "oldhighrise.png"
 };
 
 angular.module('spyPartyFilters', [])
     .filter('image', function() {
         return function (input) {
+            if (input.startsWith("Unknown")) {
+                return "unknown.png";
+            }
             return IMAGE_MAP[input];
         };
     })
@@ -104,7 +113,12 @@ angular.module('spyPartyFilters', [])
                 return input;
             }
        };
+    }).filter('charimage', function() {
+        return function(input) {
+            return CHARACTER_IMAGE_MAP[input];
+        };
     });
+
 
 var gearsApp = angular.module('gearsApp', ['ngRoute', 'spyPartyFilters', 'LocalStorageModule', 'chart.js']);
 
@@ -130,6 +144,10 @@ gearsApp.config(['$routeProvider', function($routeProvider) {
         .when('/stats', {
             templateUrl: 'partials/stats.html',
             controller: 'StatsController'
+        })
+        .when('/credits', {
+            templateUrl: 'partials/credits.html',
+            controller: 'CreditsController'
         })
         .otherwise({
             redirectTo: '/main'
@@ -170,6 +188,18 @@ gearsApp.factory('MatchPathFactory', function(localStorageService) {
         }
     }
 });
+gearsApp.factory('JournalPathFactory', function(localStorageService) {
+    return {
+        data: {
+            journalpath: localStorageService.get('journalpath')
+        },
+        update: function(journalpath) {
+            this.data.matchpath = journalpath;
+            localStorageService.set('journalpath', journalpath);
+        }
+    }
+});
+
 
 gearsApp.factory('TuneModeFactory', function(localStorageService) {
     return {
@@ -183,24 +213,61 @@ gearsApp.factory('TuneModeFactory', function(localStorageService) {
     }
 });
 
-gearsApp.controller('ReplayController', function($scope, $routeParams, ReplayFactory) {
+gearsApp.controller('CreditsController', function($scope) {
+
+});
+
+gearsApp.controller('ReplayController', function($scope, $routeParams, ReplayFactory, JournalPathFactory) {
     $scope.uuid = $routeParams.uuid;
+    $scope.timelineStyle = {'display': 'none'};
+
+    if (env.name === "development") {
+        $scope.showJournal = {'display': 'block'};
+    } else {
+        $scope.showJournal = {'display': 'none'};
+    }
+
 
     $scope.theReplay = ReplayFactory.data.replays.filter(function(it) {
         return it.uuid == $scope.uuid;
     })[0];
 
-    $scope.missions = generateMissionObject($scope.theReplay);
+    var gameId = $scope.theReplay.uuidString;
+    var theJournal = _.filter(listAllJournals(JournalPathFactory.data.journalpath), function(it) {
+        return it.indexOf(gameId) >= 0;
+    });
+
+    $scope.timeline = "Loading...";
+
+    angular.element(document).ready(function() {
+        //TODO: this gets fired more than once.  why?
+        if (theJournal[0] == undefined) {
+            return;
+        }
+
+        testDecompress(theJournal[0], function (data) {
+            $scope.timelineStyle = {'display': 'visible'};
+            $scope.journal = data;
+            $scope.timeline = data.getTimeline();
+            $scope.highlights = data.end_game_hl.sort((a, b) => a['sortWeight'] - b['sortWeight']);
+            $scope.lowlights = data.end_game_ll.sort((a, b) => a['sortWeight'] - b['sortWeight']);
+            $scope.$apply();
+        });
+    });
+
+
+    $scope.missions = $scope.theReplay.generateMissionObject();
 
     $scope.openInShell = function() {
         shell.showItemInFolder($scope.theReplay.filename);
     };
 });
 
-gearsApp.controller('SettingsController', function($scope, TuneModeFactory, UsernameFactory, MatchPathFactory) {
+gearsApp.controller('SettingsController', function($scope, TuneModeFactory, UsernameFactory, MatchPathFactory, JournalPathFactory) {
 
     $scope.username = UsernameFactory.data.username;
     $scope.matchesPath = MatchPathFactory.data.matchpath;
+    $scope.journalPath = JournalPathFactory.data.journalpath;
     $scope.tuneMode = TuneModeFactory.data.tuneMode;
 
     $scope.saveTuneMode = function() {
@@ -211,7 +278,12 @@ gearsApp.controller('SettingsController', function($scope, TuneModeFactory, User
     };
 
     $scope.saveUsername = function() {
-        UsernameFactory.update($scope.username);
+        UsernameFactory.update($scope.username.toLowerCase());
+        $scope.$apply();
+    };
+
+    $scope.clearJournalDirectory = function() {
+        JournalPathFactory.update(undefined);
     };
 
     $scope.pickDirectory = function() {
@@ -224,6 +296,17 @@ gearsApp.controller('SettingsController', function($scope, TuneModeFactory, User
 
         MatchPathFactory.update($scope.matchesPath);
     };
+
+    $scope.pickJournalDirectory = function() {
+        $scope.journalPath = dialog.showOpenDialog({
+            title: 'Choose your journal folder',
+            filters: [{name: 'SpyParty Journal Files', extensions: ['replay']}],
+            properties: ['openDirectory'],
+            defaultPath: '%LOCALAPPDATA%\\SpyParty\\Journals'
+        })[0];
+
+        JournalPathFactory.update($scope.journalPath);
+    }
 });
 
 gearsApp.controller('StatsController', function($scope, ReplayFactory, UsernameFactory, TuneModeFactory) {
@@ -239,7 +322,6 @@ gearsApp.controller('StatsController', function($scope, ReplayFactory, UsernameF
 
     $scope.replays = ReplayFactory.data.replays;
 
-    $scope.stats = getStats($scope.replays, $scope.username);
     $scope.statData = new Stats($scope.username, $scope.replays);
 
     $scope.mapData = $scope.statData.getMapChartData();
@@ -312,7 +394,7 @@ gearsApp.controller('StatsController', function($scope, ReplayFactory, UsernameF
 
 });
 
-gearsApp.controller('GearsController', function($scope, $timeout, UsernameFactory, filterFilter, ReplayFactory, MatchPathFactory) {
+gearsApp.controller('GearsController', function($scope, $timeout, $http, UsernameFactory, filterFilter, ReplayFactory, MatchPathFactory) {
     var filterReplays = function() {
         var replaySet = filterFilter($scope.replays, {level:$scope.map, missionType:$scope.layout, result:$scope.gameresult}, true);
         replaySet = filterFilter(replaySet, {$: $scope.opponent});
@@ -323,9 +405,12 @@ gearsApp.controller('GearsController', function($scope, $timeout, UsernameFactor
     $scope.path = MatchPathFactory.data.matchpath;
 
     $scope.version = getVersionNumber();
+    $scope.versionStyle = {'display': 'none'};
+
+
 
     $scope.weWon = function(replay) {
-        return getWinner(replay) === $scope.username;
+        return replay.getWinner() === $scope.username;
     };
 
     $scope.weLost = function(replay) {
@@ -366,5 +451,25 @@ gearsApp.controller('GearsController', function($scope, $timeout, UsernameFactor
     $scope.export = function() {
         exportExcelData(filterReplays());
     };
+
+    $scope.getLatestVersion = function() {
+        if ($scope.hasOwnProperty('latestVersion'))
+            return;
+        //TODO: fix this executing a bunch...what are the scope construction rules?
+
+        var id = Math.floor(Math.random() * 10000);
+
+        $http.get('http://lthummus.com/version?id=' + id).then(function(response) {
+            var data = response.data;
+            $scope.latestVersion = 'Latest version: ' + data;
+            console.log('checked latest version');
+            if (data !== $scope.version) {
+                $scope.versionStyle = {'display': 'visible'};
+            }
+        });
+    };
+
+    $scope.getLatestVersion();
+
 
 });

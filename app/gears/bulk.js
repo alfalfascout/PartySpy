@@ -1,4 +1,3 @@
-import { getWinner, getLoser, isOurGame, isIncomplete } from './utils'
 
 
 export var bulkAnalyze = function(replays, username) {
@@ -10,10 +9,10 @@ export var bulkAnalyze = function(replays, username) {
     var timeOutGames = 0;
     var missionWinGames = 0;
 
-    replays.forEach(function(item, index, list) {
-        if (isOurGame(item, username) && !isIncomplete(item)) {
+    replays.forEach((item) => {
+        if (item.isOurGame(username) && !item.isIncomplete()) {
             games++;
-            var winner = getWinner(item);
+            var winner = item.getWinner();
 
             if (winner === username) {
                 ++gamesWon;

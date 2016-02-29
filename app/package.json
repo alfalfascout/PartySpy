@@ -3,7 +3,7 @@
   "productName": "PartySpy",
   "identifier": "com.lthummus.spypartygears",
   "description": "An application for bulk SpyParty replay analysis",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "LtHummus",
   "copyright": "© LtHummus",
   "main": "background.js",
@@ -23,6 +23,10 @@
     "angular-chart.js": "^0.8.8",
     "xlsx": "^0.8.0",
     "chart.js": "^1.0.2",
-    "sweetalert": "^1.1.3"
+    "sweetalert": "^1.1.3",
+    "lzma": "^2.2.3",
+    "d3-queue": "^2.0.3",
+    "base64-js": "^1.1.1",
+    "konami-js": "^0.0.2"
   }
 }

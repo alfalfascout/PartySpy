@@ -24,10 +24,15 @@ Issues can be filed here on this GitHub project.  If you want to build and run t
 
 ### Special Thanks
 
-- AlfalfaScout for the icons
-- Tantusar for the name
-- aforgottentune, canadianbac0n, SpiritSails, Cleetose, cameraman101, Wodar for testing and suggestions
-- Chris Hecker for making SpyParty
-- Everyone in my Twitch chat for watching me write this
-- elvisnake for being deprecated because of this project :)
-
+* aforgottentune
+* AlfalfaScout
+* BTM_pl
+* cameraman101
+* canadianbac0n
+* Chris Hecker
+* Cleetose
+* elvisnake
+* magician1099
+* SpiritSails
+* Tantusar
+* Wodar

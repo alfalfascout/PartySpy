@@ -33,6 +33,9 @@
     <script src="node_modules/angular-chart.js/dist/angular-chart.js"></script>
     <script src="node_modules/xlsx/dist/xlsx.full.min.js"></script>
     <script src="node_modules/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="node_modules/lzma/src/lzma.js"></script>
+    <script src="node_modules/d3-queue/build/d3-queue.min.js"></script>
+    <script src="node_modules/konami-js/index.js"></script>
 
     <script src="app.js"></script>
 </head>
@@ -68,6 +71,7 @@
                         <option value="Courtyard 1">Courtyard 1</option>
                         <option value="Double Modern">Double Modern</option>
                         <option value="Modern">Modern</option>
+                        <option value="Old High-Rise">Old High-Rise</option>
                     </select>
                 </div>
                 <div class="form-group-sm">
@@ -98,6 +102,11 @@
             <a href="#/settings">
             <button class="btn">Settings</button>
             </a>
+            <a href="#/credits">
+                <button class="btn">Credits</button>
+            </a>
+            <br />
+            <br />
 
             <div id="bulk">
                 Games: {{bulkResults.games}} <br/>
@@ -109,12 +118,26 @@
                 <br />
                 <br />
                 <p>Version {{version}}</p>
+                <p>{{latestVersion}}</p>
+                <p ng-style="versionStyle">
+                    YOU HAVE AN OUTDATED VERSION! Get the new version from the <a href="https://secure.spyparty.com/beta/forums/viewtopic.php?f=3&t=2363">forum thread</a></p>
             </div>
         </div>
         <div class="col-md-10" ng-view></div>
         <!-- main -->
 
+        <script>
+            const shell = require('electron').shell;
+            $(document).on('click', 'a[href^="http"]', function(event) {
+                event.preventDefault();
+                shell.openExternal(this.href);
+            });
+            $(document).on('click', 'a[href^="https"]', function(event) {
+                event.preventDefault();
+                shell.openExternal(this.href);
+            });
 
+        </script>
     </div>
 </div>
 </body>

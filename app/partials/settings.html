@@ -1,6 +1,7 @@
 <div id="test">
     <p><a href="#/main"><button class="btn btn-primary">Go back</button></a></p>
 
+    <p>Note that you'll have to restart PartySpy after changing these settings</p>
     <form>
         <div class="form-group">
             <label for="usernameInput">SpyParty Username:</label>
@@ -11,6 +12,18 @@
             <input type="text" class="form-control" id="matchesPathInput" ng-model="matchesPath" disabled>
             <button class="btn" ng-click="pickDirectory()">Pick SpyParty Matches Folder</button>
         </div>
+        <div class="form-group">
+            <label for="journalPathInput">Path to SpyParty Journal folder:</label>
+            <input type="text" class="form-control" id="journalPathInput" ng-model="journalPath" disabled>
+            <button class="btn" ng-click="pickJournalDirectory()">Pick SpyParty Journal Folder</button> <button class="btn" ng-click="clearJournalDirectory()">Clear Setting</button>
+        </div>
+
+        <p>A note about journals:</p>
+        <p>Journal parsing is entirely optional.  Enabling journal parsing will enable more detailed statistics, but journals
+        contain some personal information (computer username, graphics card info, CPUID, etc).  I super promise not to mine your
+        data for information (the information never leaves your machine), but if you're uncomfortable with giving the program access you don't have to use it.  You will miss out
+        on some neat features though.</p>
+        <p>Your journals are probably located at C:\Users\&lt;Your Username&gt;\AppData\Local\SpyParty\journals</p>
         <!--
         <div class="form-group">
             <label for="aforgottentuneMode">aforgottentune Mode (may cause flashing colors so enable at own risk)</label>
@@ -19,4 +32,11 @@
         -->
     </form>
 
+    <script>
+        new Konami(function () {
+            console.log("Hello");
+        });
+    </script>
+
 </div>
+

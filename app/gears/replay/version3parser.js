@@ -1,10 +1,11 @@
-import { parseString, unpackInt, unpackMissions, unpackFloat, unpackMissionType } from './utils'
-import { UNAVAILABLE_MISSIONS } from './level'
+import { parseString, unpackInt, unpackMissions, unpackFloat, unpackMissionType } from './../utils'
+import { UNAVAILABLE_MISSIONS } from './../level'
 
 const sprintf = require('sprintf-js').sprintf;
 const binary = require('binary');
 const uuid = require('node-uuid');
 const moment = require('moment');
+const base64 = require('base64-js');
 
 var RESULT_MAP = {
     0: "Missions Win",
@@ -29,7 +30,18 @@ var LEVEL_MAP = {
     "0x9C2E7B0": "Old Ballroom",
     "0x-4B309795": "Courtyard 1",
     "0x7076E38F": "Double Modern",
-    "0x-C19EB9F": "Modern"
+    "0x-C19EB9F": "Modern",
+    "0x-77FDB7D6": "Old High-Rise"
+};
+
+var cleanUuid = function(uuidBytes) {
+    var baseString = base64.fromByteArray(uuidBytes);
+    if (baseString.indexOf("=") >= 0) {
+        baseString = baseString.substring(0, baseString.indexOf("="));
+    }
+
+    return baseString.replace(/\+/g, "-").replace(/\//g, "_");
+
 };
 
 export var parseVersion3 = function(filename, data) {
@@ -50,8 +62,9 @@ export var parseVersion3 = function(filename, data) {
     var level = LEVEL_MAP[sprintf("0x%X", levelId)];
 
     if (level == undefined) {
+        console.log('Unknown map code: ' + filename);
         console.log(sprintf("0x%X", levelId));
-        return undefined;
+        level = "Unknown -- " + levelId;
     }
 
     var gameStartTime = unpackInt(data.slice(0x28, 0x28 + 4));
@@ -95,8 +108,8 @@ export var parseVersion3 = function(filename, data) {
         duration: Math.round(duration),
         missionType: missionType,
         uuid: uuid,
+        uuidString: cleanUuid(uuidByteArray),
         unavailableMissions: UNAVAILABLE_MISSIONS[level],
         humanGameStartTime: moment(gameStartTime * 1000).format("dddd, MMMM Do YYYY, h:mm:ss a")
     }
 };
-
