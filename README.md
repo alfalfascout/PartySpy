@@ -1,6 +1,6 @@
 ## PartySpy
 
-Version 0.0.3
+Version 0.0.4
 
 PartySpy is a tool analyzing replay files from the game [SpyParty](http://spyparty.com) in bulk.  It is designed for users to analyze their own play and get better through analysis.  
 
