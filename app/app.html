@@ -10,14 +10,6 @@
     <link href="node_modules/sweetalert/dist/sweetalert.css" rel="stylesheet" type="text/css">
     <link href="./stylesheets/main.css" rel="stylesheet" type="text/css">
 
-    <style>
-        i:before {
-            font-size: 0.50em;
-            position: relative;
-            top: -7px;
-        }
-    </style>
-
     <script>
         window.$ = window.jQuery = require('./node_modules/jquery/dist/jquery.js');
         require('bootstrap');
@@ -42,20 +34,21 @@
 <body>
 <div class="container-fluid" ng-controller="GearsController">
     <div class="row">
-        <div class="col-md-2" id="side-nav">
+        <div class="col-xs-4 col-md-3" id="side-nav">
             <!-- SORRY ALFALFA! -->
             <div ng-if="uninitialized()" style="color: red; font-weight: bold; font-size: 24px">
                 YOU HAVEN'T INITIALIZED ANYTHING.  GO CLICK SETTINGS AND SET STUFF UP.  THEN RESTART THE APP.
             </div>
             <!-- Side nav -->
             <div id="filter-form">
-                <div class="form-group-sm">
+                <div class="form-group">
                     <label for="opponent">Opponent:</label>
-                    <input type="text" id="opponent" ng-model="opponent" ng-change="reevalBulk()"/>
+                    <input type="text" id="opponent" ng-model="opponent" ng-change="reevalBulk()" class="form-control"/>
                 </div>
-                <div class="form-group-sm">
+                <div class="form-group">
                 <label for="map">Map:</label>
-                    <select id="map" ng-model="map" ng-change="reevalBulk()">
+                    <select id="map" ng-model="map" ng-change="reevalBulk()"
+                        class="form-control">
                         <option value="Beginner v. Beginner Ballroom">Beginner v. Beginner Ballroom</option>
                         <option value="Beginner v. Beginner High-Rise">Beginner v. Beginner High-Rise</option>
                         <option value="New Art Ballroom">New Art Ballroom</option>
@@ -74,15 +67,15 @@
                         <option value="Old High-Rise">Old High-Rise</option>
                     </select>
                 </div>
-                <div class="form-group-sm">
+                <div class="form-group">
                     <label for="layout">Layout:</label>
-                    <select id="layout" ng-model="layout" ng-change="reevalBulk()">
+                    <select id="layout" ng-model="layout" ng-change="reevalBulk()" class="form-control">
                         <option ng-repeat="curr in layouts" value="{{curr}}">{{curr}}</option>
                     </select>
                 </div>
-                <div class="form-group-sm">
+                <div class="form-group">
                     <label for="gameresult">Game result:</label>
-                    <select id="gameresult" ng-model="gameresult" ng-change="reevalBulk()">
+                    <select id="gameresult" ng-model="gameresult" ng-change="reevalBulk()" class="form-control">
                         <option value="Missions Win">Missions Win</option>
                         <option value="Spy Time Out">Spy Time Out</option>
                         <option value="Spy Shot">Spy Shot</option>
@@ -91,20 +84,19 @@
                     </select>
                 </div>
             </div>
-            <button class="btn" ng-click="clearFilter()">Clear Filters</button><br />
-            <button class="btn" ng-click="export()">Export Data</button>
+            <button class="btn btn-default" ng-click="clearFilter()">Clear Filters</button><br />
+            <button class="btn btn-default" ng-click="export()">Export Data</button>
             <br />
             <br />
             <br />
+            <a href="#/main">
+                <button class="btn btn-default">Games List</button></a>
             <a href="#/stats">
-                <button class="btn">Stats</button>
-            </a>
+                <button class="btn btn-default">Stats</button></a>
             <a href="#/settings">
-            <button class="btn">Settings</button>
-            </a>
+                <button class="btn btn-default">Settings</button></a>
             <a href="#/credits">
-                <button class="btn">Credits</button>
-            </a>
+                <button class="btn btn-default">Credits</button></a>
             <br />
             <br />
 
@@ -123,7 +115,7 @@
                     YOU HAVE AN OUTDATED VERSION! Get the new version from the <a href="https://secure.spyparty.com/beta/forums/viewtopic.php?f=3&t=2363">forum thread</a></p>
             </div>
         </div>
-        <div class="col-md-10" ng-view></div>
+        <div class="col-xs-8 col-md-9 col-xs-offset-4 col-md-offset-3" id="main-view" ng-view></div>
         <!-- main -->
 
         <script>
